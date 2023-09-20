@@ -34,6 +34,24 @@ func TestSumcheck(t *testing.T) {
 	fmt.Printf("\t%v\n", SumcheckVerifier(c0, c1, sum))
 }
 
+func BenchmarkMultilinearExtension(b *testing.B) {
+	size := 12
+	index := make([]int64, (1<<size)-1)
+	val := make([]int64, (1<<size)-1)
+	x := make([]int64, size)
+	for i := 0; i < (1<<size)-1; i++ {
+		index[i] = int64(1)
+		val[i] = int64(i)
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_ = MultilinearExtension(index, val, x)
+		}
+	})
+}
+
 func BenchmarkSumcheckProver(b *testing.B) {
 	size := 20
 	coeff := make([]int64, (1<<size)-1)
